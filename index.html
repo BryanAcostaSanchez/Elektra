@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Propuesta: Historias Elektra - Relanzamiento Capítulo Mamá Sorda</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -404,10 +403,12 @@
 
   /* PRINT / PDF */
   @media print {
-    body { background: white; }
-    .page { box-shadow: none; }
-    .download-bar { display: none; }
-    .section { break-inside: avoid; }
+    body { background: white; margin: 0; }
+    .page { box-shadow: none; max-width: none; }
+    .download-bar { display: none !important; }
+    .cover { min-height: auto; padding: 60px; page-break-after: always; }
+    .section { break-inside: avoid; page-break-inside: avoid; }
+    .policy-grid, .why-grid { display: grid; }
   }
 </style>
 </head>
@@ -631,53 +632,7 @@
 
 <script>
 function downloadPDF() {
-  const btn = document.querySelector('.btn-download');
-  btn.disabled = true;
-  btn.textContent = 'Generando...';
-
-  const element = document.getElementById('proposal-content');
-  
-  // Temporarily adjust styles for PDF rendering
-  const cover = document.querySelector('.cover');
-  const policyGrid = document.querySelector('.policy-grid');
-  const whyGrid = document.querySelector('.why-grid');
-  const addonFlex = document.querySelector('.addon-flex');
-  
-  // Save originals
-  const origCover = cover.style.cssText;
-  const origPolicy = policyGrid ? policyGrid.style.cssText : '';
-  const origWhy = whyGrid ? whyGrid.style.cssText : '';
-  
-  // Override for PDF
-  cover.style.minHeight = 'auto';
-  cover.style.padding = '80px 60px';
-  
-  const opt = {
-    margin: [10, 0, 10, 0],
-    filename: 'Propuesta_Historias_Elektra_Mama_Sorda.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
-      scale: 2, 
-      useCORS: true, 
-      letterRendering: true,
-      scrollY: 0,
-      windowWidth: 800
-    },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: ['css', 'legacy'], before: '.section' }
-  };
-
-  html2pdf().set(opt).from(element).save().then(() => {
-    // Restore styles
-    cover.style.cssText = origCover;
-    if (policyGrid) policyGrid.style.cssText = origPolicy;
-    if (whyGrid) whyGrid.style.cssText = origWhy;
-    btn.disabled = false;
-    btn.textContent = 'Descargar PDF';
-  }).catch(() => {
-    btn.disabled = false;
-    btn.textContent = 'Descargar PDF';
-  });
+  window.print();
 }
 </script>
 
