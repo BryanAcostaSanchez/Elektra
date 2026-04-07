@@ -636,16 +636,45 @@ function downloadPDF() {
   btn.textContent = 'Generando...';
 
   const element = document.getElementById('proposal-content');
+  
+  // Temporarily adjust styles for PDF rendering
+  const cover = document.querySelector('.cover');
+  const policyGrid = document.querySelector('.policy-grid');
+  const whyGrid = document.querySelector('.why-grid');
+  const addonFlex = document.querySelector('.addon-flex');
+  
+  // Save originals
+  const origCover = cover.style.cssText;
+  const origPolicy = policyGrid ? policyGrid.style.cssText : '';
+  const origWhy = whyGrid ? whyGrid.style.cssText : '';
+  
+  // Override for PDF
+  cover.style.minHeight = 'auto';
+  cover.style.padding = '80px 60px';
+  
   const opt = {
-    margin: 0,
+    margin: [10, 0, 10, 0],
     filename: 'Propuesta_Historias_Elektra_Mama_Sorda.pdf',
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+    html2canvas: { 
+      scale: 2, 
+      useCORS: true, 
+      letterRendering: true,
+      scrollY: 0,
+      windowWidth: 800
+    },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    pagebreak: { mode: ['css', 'legacy'], before: '.section' }
   };
 
   html2pdf().set(opt).from(element).save().then(() => {
+    // Restore styles
+    cover.style.cssText = origCover;
+    if (policyGrid) policyGrid.style.cssText = origPolicy;
+    if (whyGrid) whyGrid.style.cssText = origWhy;
+    btn.disabled = false;
+    btn.textContent = 'Descargar PDF';
+  }).catch(() => {
     btn.disabled = false;
     btn.textContent = 'Descargar PDF';
   });
